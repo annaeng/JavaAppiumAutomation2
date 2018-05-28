@@ -87,6 +87,18 @@ public class FirstTest {
                 15
         );
 
+        waitForElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Wikimedia-Begriffsklärungsseite']"),
+                "CANNOT FIND 'Wikimedia-Begriffsklärungsseite'topic searching by 'Java'",
+                15
+        );
+
+        waitForElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Skriptsprache']"),
+                "CANNOT FIND 'Skriptsprache'topic searching by 'Java'",
+                15
+        );
+
         waitForElementAndClear(
                 By.id("org.wikipedia:id/search_src_text"),
                 "Cannot find search field",
