@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.List;
 
 public class FirstTest {
 
@@ -345,6 +346,22 @@ public class FirstTest {
         makeSureSecondArticleStillInTheFolderAndTheTitleIsCorrect(); //go to the folder with saved article and make sure it is the second one
     }
 
+
+    @Test
+    public void testAmountOfNotEmptySearch() {
+        searchArticleAndMakeSureYouGotResults();
+    }
+
+    @Test
+    public void testAmountOfEmptySearch() {
+        AmountOfEmptySearch();
+    }
+
+
+    @Test
+    public void testAssertTitlePresent() {
+        AssertTitlePresent();
+    }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
@@ -760,4 +777,152 @@ public class FirstTest {
         );
     }
 
+    private void searchArticleAndMakeSureYouGotResults() {
+
+        //Looking for a search field on the start page of Wiki and click on it
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Wikipedia durchsuchen')]"),
+                "CANNOT FIND 'Wikipedia durchsuchen' INPUT",
+                5
+        );
+
+        //Typing a name (what we are looking for) into the search field  on the new screen
+
+        String search_line = "Linkin Park/Diskografie";
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Suchen…')]"),
+                search_line,
+                "CANNOT FIND search input 'Suchen…'",
+                5
+        );
+
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']";
+        waitForElementPresent(
+                By.xpath(search_result_locator),
+                "Cannot find anything by the request " + search_line,
+                15
+        );
+
+        int amount_of_search_results = getAmountOfElements(
+                By.xpath(search_result_locator)
+        );
+
+        Assert.assertTrue(
+                "We found too few results!",
+                amount_of_search_results > 0
+        );
+    }
+
+    private int getAmountOfElements(By by) {
+        List elements = driver.findElements(by);
+        return elements.size();
+    }
+
+    private void AmountOfEmptySearch() {
+        //Looking for a search field on the start page of Wiki and click on it
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Wikipedia durchsuchen')]"),
+                "CANNOT FIND 'Wikipedia durchsuchen' INPUT",
+                5
+        );
+
+        //Typing a name (what we are looking for) into the search field  on the new screen
+        String search_line = "klrjgoifsgju";
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Suchen…')]"),
+                search_line,
+                "CANNOT FIND search input 'Suchen…'",
+                5
+        );
+
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']";
+        String empty_result_label = "//*[@text='Keine Ergebnisse gefunden']";
+        waitForElementPresent(
+                By.xpath(empty_result_label),
+                "Cannot find empty result label by the request " + search_line,
+                15
+        );
+
+        assertElementNotPresent(
+                By.xpath(search_result_locator),
+                "We have found some results by request " + search_line
+        );
+
+    }
+
+    private void assertElementNotPresent(By by, String error_message)
+    {
+        int amount_of_elements = getAmountOfElements(by);
+        if (amount_of_elements > 0)
+        {
+            String default_message = "An element '" + by.toString() + "' suppoused to be not present";
+            throw new AssertionError(default_message + "" + error_message);
+        }
+    }
+
+    private void AssertTitlePresent() {
+        //Looking for a search field on the start page of Wiki and click on it
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Wikipedia durchsuchen')]"),
+                "CANNOT FIND 'Wikipedia durchsuchen' INPUT",
+                5
+        );
+
+        //Typing a name (what we are looking for) into the search field  on the new screen
+        String search_line = "Java";
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Suchen…')]"),
+                search_line,
+                "CANNOT FIND search input 'Suchen…'",
+                5
+        );
+
+        //Open the article like this: looking for an article with the certain description of the search result and click on it
+        String title_of_the_article = "Java (Programmiersprache)";
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='" + title_of_the_article + "']";
+
+        waitForElementAndClick(
+                By.xpath(search_result_locator),
+                "Cannot find an article with the description" + title_of_the_article,
+                5
+        );
+
+        //assert title
+        String title_locator = "//*[@resource-id='org.wikipedia:id/view_page_title_text'][@text='" + title_of_the_article + "']";
+        int amount_of_elements_title = getAmountOfElements(
+                By.xpath(title_locator)
+        );
+
+        Assert.assertTrue(
+                "We didn't find element 'title' at this article",
+                amount_of_elements_title < 1
+        );
+
+//        // assert title with waitForElementPresent
+//        String title_in_the_article_locator = "//*[@resource-id='org.wikipedia:id/view_page_title_text'][@text='Java (Programmiersprache)']";
+//        waitForElementPresent(
+//                By.xpath(title_in_the_article_locator),
+//                "Cannot find title " + title_of_the_article,
+//                15
+//        );
+//
+//        assertElementPresent(
+//                By.xpath(title_in_the_article_locator),
+//                "There is no element 'title' found for the article  " + title_of_the_article
+//        );
+
+    }
+
+    private void assertElementPresent(By by, String error_message)
+    {
+        int amount_of_title_element = getAmountOfElements(by);
+        if (amount_of_title_element < 0)
+        {
+            String default_message = " Element 'title' " + by.toString() + "' suppoused to be present";
+            throw new AssertionError(default_message + "" + error_message);
+        }
+    }
 }
+
+
+
