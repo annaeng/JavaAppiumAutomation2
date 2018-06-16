@@ -5,6 +5,7 @@ import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 public class ArticleTests extends CoreTestCase
@@ -13,7 +14,7 @@ public class ArticleTests extends CoreTestCase
     @Test
     public void testCompareArticleTitle() {
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
@@ -28,7 +29,7 @@ public class ArticleTests extends CoreTestCase
     @Test
     public void testSwipeArticle()
     {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
 
         SearchPageObject.initSearchInput();
         //my App is in German, first I have to change language to English, so this article appears
@@ -49,7 +50,7 @@ public class ArticleTests extends CoreTestCase
     public void testSaveTwoArticlesAndDeleteOne() {
 
         // saving the first article to the new folder and close the article - we are on the homepage
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickOnSearchResult("Objektorientierte Programmiersprache");
@@ -60,7 +61,7 @@ public class ArticleTests extends CoreTestCase
 
         String name_of_folder = "Learning programming";
         ArticlePageObject.addArticleToMyList(name_of_folder);
-        ArticlePageObject.closeArcticle();//we are on the Homepage
+        ArticlePageObject.closeArticle();//we are on the Homepage
 
         //my App is in German, first I have to change language to English, so this article comes on the top
         SearchPageObject.initSearchInput();
@@ -71,7 +72,7 @@ public class ArticleTests extends CoreTestCase
 
         ArticlePageObject.waitForTitleElement();
         ArticlePageObject.addArticleToExistingList(name_of_folder);
-        ArticlePageObject.closeArcticle();// we are on the Homepage
+        ArticlePageObject.closeArticle();// we are on the Homepage
 
         NavigationUI NavigationUI = new NavigationUI(driver);
         NavigationUI.clickMyLists();
